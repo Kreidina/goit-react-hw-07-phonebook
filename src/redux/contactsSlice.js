@@ -7,6 +7,9 @@ const initialState = {
   error: '',
 };
 
+const arrayThunks = [fetchContacts, addNewContact, deleteContacts];
+const fun = type => arrayThunks.map(thunk => thunk[type]);
+
 const handelPending = state => {
   state.isLoading = true;
 };
@@ -28,8 +31,7 @@ const handelFulfilledAdd = (state, { payload }) => {
 };
 
 const handelFulfilledDelete = (state, { payload }) => {
-  const index = state.items.findIndex(item => item.id === payload.id);
-  state.items.splice(index, 1);
+  state.items = state.items.filter(item => item.id !== payload.id);
 };
 
 const contactsSlice = createSlice({
@@ -40,59 +42,10 @@ const contactsSlice = createSlice({
       .addCase(fetchContacts.fulfilled, handelFulfilledFetch)
       .addCase(addNewContact.fulfilled, handelFulfilledAdd)
       .addCase(deleteContacts.fulfilled, handelFulfilledDelete)
-      .addMatcher(
-        isAnyOf(
-          fetchContacts.pending,
-          addNewContact.pending,
-          deleteContacts.pending
-        ),
-        handelPending
-      )
-      .addMatcher(
-        isAnyOf(
-          fetchContacts.rejected,
-          addNewContact.rejected,
-          deleteContacts.rejected
-        ),
-        handelRejected
-      )
-      .addMatcher(
-        isAnyOf(
-          fetchContacts.fulfilled,
-          addNewContact.fulfilled,
-          deleteContacts.fulfilled
-        ),
-        handelFulfilled
-      );
+      .addMatcher(isAnyOf(...fun('pending')), handelPending)
+      .addMatcher(isAnyOf(...fun('rejected')), handelRejected)
+      .addMatcher(isAnyOf(...fun('fulfilled')), handelFulfilled);
   },
 });
 
 export const contactsReducer = contactsSlice.reducer;
-
-// {
-//   [fetchContacts.pending]: handelPending,
-//   [addNewContact.pending]: handelPending,
-//   [deleteContacts.pending]: handelPending,
-//   [fetchContacts.rejected]: handelRejected,
-//   [addNewContact.rejected]: handelRejected,
-//   [addNewContact.rejected]: handelRejected,
-
-//   [fetchContacts.fulfilled](state, { payload }) {
-//     state.isLoading = false;
-//     state.items = payload;
-//     state.error = '';
-//   },
-
-//   [addNewContact.fulfilled](state, { payload }) {
-//     state.isLoading = false;
-//     state.items = [...state.items, payload];
-//     state.error = '';
-//   },
-
-//   [deleteContacts.fulfilled](state, { payload }) {
-//     state.isLoading = false;
-//     state.error = '';
-//     const index = state.items.findIndex(item => item.id === payload.id);
-//     state.items.splice(index, 1);
-//   },
-// },

@@ -1,15 +1,19 @@
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import css from './ContactList.module.css';
 import ContactItem from 'components/ContactItem';
-import { getContacts, getError, getFilter } from 'redux/selectors';
+import {
+  selectError,
+  selectIsLoading,
+  selectVisibleContacts,
+} from 'redux/selectors';
 import { fetchContacts } from 'redux/operations';
 
 const ContactList = () => {
   const dispatch = useDispatch();
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
-  const error = useSelector(getError);
+  const error = useSelector(selectError);
+  const isLoading = useSelector(selectIsLoading);
+  const visibleContacts = useSelector(selectVisibleContacts);
 
   useEffect(() => {
     if (error) {
@@ -21,24 +25,18 @@ const ContactList = () => {
     dispatch(fetchContacts());
   }, [dispatch]);
 
-  const visibleContact = useMemo(() => {
-    const normalizeFilter = filter.toLowerCase();
-    const visibleContact = contacts.filter(contact =>
-      contact.name.toLowerCase().includes(normalizeFilter)
-    );
-    return visibleContact;
-  }, [contacts, filter]);
-
   return (
     <>
-      {visibleContact.length !== 0 ? (
+      {visibleContacts.length !== 0 ? (
         <ul className={css.contactList}>
-          {visibleContact.map(({ name, phone, id }) => {
+          {visibleContacts.map(({ name, phone, id }) => {
             return <ContactItem name={name} number={phone} key={id} id={id} />;
           })}
         </ul>
       ) : (
-        <p className={css.message}>There is no contact with that name</p>
+        !isLoading && (
+          <p className={css.message}>There is no contact with that name</p>
+        )
       )}
     </>
   );

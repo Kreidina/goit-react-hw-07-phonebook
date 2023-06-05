@@ -2,10 +2,10 @@ import { nanoid } from 'nanoid';
 import PropTypes from 'prop-types';
 import { useSelector } from 'react-redux';
 import css from './FormMarcup.module.css';
-import { getIsLoading } from 'redux/selectors';
+import { selectIsLoading } from 'redux/selectors';
 
 const FormMarcup = ({ submitContact }) => {
-  const loading = useSelector(getIsLoading);
+  const loading = useSelector(selectIsLoading);
   const inputNameId = nanoid();
   const inputNumberId = nanoid();
 
