@@ -1,5 +1,8 @@
 .contactItem {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 10px;
+  width: 400px;
 }
 .deleteBtn {
   background-color: white;

@@ -1,0 +1,10 @@
+.contactList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding: 0 80px;
+}
+.message {
+  font-weight: 600;
+  text-align: center;
+}

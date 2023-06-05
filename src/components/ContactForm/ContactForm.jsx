@@ -1,42 +1,33 @@
-import { useDispatch } from 'react-redux';
-
-import FormMarcup from 'components/FormMarcup/FormMarcup';
-// import { useEffect } from 'react';
-import { addNewContact } from 'redux/operations';
-// import { getContacts } from 'redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
-//
+import FormMarcup from 'components/FormMarcup/FormMarcup';
+import { addNewContact } from 'redux/operations';
+import { getContacts } from 'redux/selectors';
+
 const ContactForm = () => {
   const dispatch = useDispatch();
-  // const contacts = useSelector(getContacts);
-  // console.log(contacts);
+  const contacts = useSelector(getContacts);
 
   const submitContact = e => {
     e.preventDefault();
     const form = e.target;
     const name = form.elements.name.value;
     const phone = form.elements.number.value;
-    const newContact = {
-      id: nanoid(),
-      name,
-      phone,
-    };
-    console.log(newContact);
-    //   if (
-    //     contacts.some(
-    //       contact => contact.name.toLowerCase() === name.toLowerCase()
-    //     )
-    //   )
-    //     return alert(`Name: ${name} to already in contacts`);
+    if (
+      contacts.some(
+        contact => contact.name.toLowerCase() === name.toLowerCase()
+      )
+    )
+      return alert(`Name: ${name} to already in contacts`);
 
-    //   if (
-    //     contacts.some(
-    //       contact => contact.number.toLowerCase() === number.toLowerCase()
-    //     )
-    //   )
-    //     return alert(`Number: ${number} to already in contacts`);
+    if (
+      contacts.some(
+        contact => contact.phone.toLowerCase() === phone.toLowerCase()
+      )
+    )
+      return alert(`Number: ${phone} to already in contacts`);
 
-    dispatch(addNewContact(newContact));
+    dispatch(addNewContact({ name, phone, id: nanoid() }));
     form.reset();
   };
 
